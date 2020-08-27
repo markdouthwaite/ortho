@@ -3,9 +3,8 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const jwt = require("express-jwt");
-const UserRouter = require("./routes/users");
 
-const { authHandler } = require("./routes/auth");
+const { AuthRouter } = require("./routes/auth");
 
 dotenv.config();
 
@@ -23,9 +22,6 @@ mongoose.connect(URI, {
   dbName: DB_NAME,
 });
 
-db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-
 app = express();
 
 // app.use(morgan("dev"));
@@ -39,18 +35,17 @@ app.use(
   })
 );
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
-    console.log(req.headers);
     res.status(401).send("Failed to authenticate credentials.");
+  } else {
+    next();
   }
 });
 
-app.use("/v1/user", UserRouter);
-
-app.post(
+app.use(
   "/v1/auth",
-  authHandler(SECRET, { expiresIn: TOKEN_EXPIRY, algorithm: SECRET_ALGO })
+  AuthRouter(SECRET, { expiresIn: TOKEN_EXPIRY, algorithm: SECRET_ALGO })
 );
 
 app.listen(PORT, () => {

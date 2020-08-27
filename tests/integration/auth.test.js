@@ -5,14 +5,16 @@ const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 
 const { app, SECRET } = require("../../app");
-const { createUser, deleteUser } = require("../../controllers/users");
+const { createUser, deleteUser } = require("../../src/user");
 
 describe("Authentication", () => {
   const id = uuid();
   const password = uuid();
 
-  before(async () => {
-    await createUser(id, password);
+  before((done) => {
+    createUser(id, password).then((_) => {
+      done();
+    });
   });
 
   describe("POST /v1/auth", () => {
@@ -23,6 +25,8 @@ describe("Authentication", () => {
         .then((res) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.have.property("token");
+
+          // check token format and content.
           const parts = res.body.token.split(" ");
           expect(parts[0]).equal("Bearer");
           jwt.verify(parts[1], SECRET, (err, _) => {
@@ -38,16 +42,22 @@ describe("Authentication", () => {
         .send({ id: "wrong_username", password: password })
         .then((res) => {
           expect(res.status).to.equal(401);
-          expect(res.text).to.equal("Failed to authenticate credentials.");
+          expect(res.text).to.equal(
+            "Invalid credentials: user id or password incorrect."
+          );
         });
     });
 
     it("Returns 401 error and correct message when invalid password provided.", () => {
       return request(app)
         .post("/v1/auth")
-        .send({ id: id, password: "wrong_password" });
-      expect(res.status).to.equal(401);
-      expect(res.text).to.equal("Failed to authenticate credentials.");
+        .send({ id: id, password: "wrong_password" })
+        .then((res) => {
+          expect(res.status).to.equal(401);
+          expect(res.text).to.equal(
+            "Invalid credentials: user id or password incorrect."
+          );
+        });
     });
 
     it("Returns 401 error and correct message when payload not sent.", () => {
@@ -56,7 +66,9 @@ describe("Authentication", () => {
         .send({})
         .then((res) => {
           expect(res.status).to.equal(401);
-          expect(res.text).to.equal("Failed to authenticate credentials.");
+          expect(res.text).to.equal(
+            "Invalid credentials: no credentials provided."
+          );
         });
     });
   });

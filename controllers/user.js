@@ -1,15 +1,4 @@
-const Router = require("express").Router;
-const UserController = require("../controllers/users");
-
-const router = Router();
-
-async function adminOnlyResource(req, res, next) {
-  if (req.user.admin) {
-    next();
-  } else {
-    res.status(403).send("You do not have permission to use this resource.");
-  }
-}
+const { getUser, getUsers } = require("../src/user");
 
 function unpackUserList(list) {
   return list.map((_) => ({ id: _.id, admin: _.admin }));
@@ -17,7 +6,7 @@ function unpackUserList(list) {
 
 async function getUserHandler(req, res) {
   if (req.user.id === req.params.id || req.user.admin) {
-    await UserController.getUser(req.params.id, (err, user) => {
+    await getUser(req.params.id, (err, user) => {
       if (err || !user) {
         res.status(404).send(`No known user with id '${req.params.id}'.`);
       } else {
@@ -30,7 +19,7 @@ async function getUserHandler(req, res) {
 }
 
 async function getUserListHandler(req, res) {
-  await UserController.getUsers(req.params.count, (err, userList) => {
+  await getUsers(req.params.count, (err, userList) => {
     if (err) {
       res.status(500).send(`Failed to fetch user list. ${err}`);
     } else {
@@ -39,8 +28,7 @@ async function getUserListHandler(req, res) {
   });
 }
 
-router.get("/account/:id$/", getUserHandler);
-router.get("/list", adminOnlyResource, getUserListHandler);
-// router.post("/account/", creat);
-
-module.exports = router;
+module.exports = {
+  getUserHandler,
+  getUserListHandler,
+};

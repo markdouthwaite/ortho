@@ -10,40 +10,17 @@
 // const { createUser, deleteAllUsers } = require("../../controllers/users");
 //
 // describe("User management", () => {
-//   let defaultJwt = null;
-//   let adminJwt = null;
+//   let jwtSet = {};
 //
 //   const defaultUser = { id: uuid(), password: uuid(), admin: false };
 //   const adminUser = { id: uuid(), password: uuid(), admin: true };
 //
-//   function createUserAndAuthenticate(user, callback) {
-//     createUser(user.id, user.password, user.admin).then((res) =>
-//       console.log(res)
-//     );
-//     // createUser(user.id, user.password, user.admin, async () => {
-//     // await getAuth(
-//     //   user.id,
-//     //   user.password,
-//     //   SECRET,
-//     //   {
-//     //     expiresIn: TOKEN_EXPIRY,
-//     //     algorithm: SECRET_ALGO,
-//     //   },
-//     //   callback
-//     // );
-//     // });
-//   }
-//
-//   beforeEach(async () => {
-//     createUserAndAuthenticate(defaultUser);
-//     // await series([
-//     //   createUserAndAuthenticate(defaultUser, (_, jwt) => {
-//     //     defaultJwt = jwt;
-//     //   }),
-//     //   createUserAndAuthenticate(adminUser, (_, jwt) => {
-//     //     adminJwt = jwt;
-//     //   }),
-//     // ]);
+//   beforeEach(() => {
+//     createUsers([defaultUser, adminUser]).then((userList) => {
+//       userList.forEach((user) => {
+//         // jwtSet[user]
+//       });
+//     });
 //   });
 //
 //   describe("GET /v1/user/account", () => {
