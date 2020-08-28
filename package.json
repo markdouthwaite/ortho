@@ -2,9 +2,9 @@
   "name": "ortho",
   "version": "0.0.1",
   "description": "A simple authentication service.",
-  "main": "app.js",
+  "main": "legacy/app.js",
   "scripts": {
-    "test": "mocha sandbox.js --exit --timeout 1000 "
+    "test": "mocha test/* --exit --timeout 1000 "
   },
   "repository": {
     "type": "git",
