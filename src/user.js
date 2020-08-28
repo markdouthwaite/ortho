@@ -1,18 +1,17 @@
 const User = require("../models/user");
 const { encryptPassword } = require("../src/utils");
 
-async function getUser(id, callback) {
-  return User.findOne({ id: id }, callback);
+function getUser(id, callback) {
+  User.findOne({ id: id }, callback);
 }
 
-async function getUserList(count, callback) {
+function getUsers(count, callback) {
   if (typeof count === "function") {
-    await User.find({}, count);
+    User.find({}, count).select("id -_id");
   } else if (!count) {
-    await User.find({}, callback);
+    User.find({}, callback).select("id -_id");
   } else {
-    const q = await User.find({}).select("id -_id").limit(count);
-    await q.exec(callback);
+    User.find({}, callback).select("id -_id").limit(count);
   }
 }
 
@@ -20,34 +19,45 @@ function unpackUserList(list) {
   return list.map((_) => ({ id: _.id, admin: _.admin }));
 }
 
-async function createUsers(userList, callback) {}
+function createUsers(userList, callback) {
+  return userList.map((user) => {
+    createUser(user.id, user.password, user.admin, callback);
+  });
+}
 
-async function createUser(id, password, admin, callback) {
+function createUser(id, password, admin, callback) {
+  const { salt, hash } = encryptPassword(password);
   const user = new User({
     id: id,
     admin: admin,
+    salt: salt,
+    hash: hash,
   });
-  const { salt, hash } = encryptPassword(password);
-  user.salt = salt;
-  user.hash = hash;
-  return user.save().then(callback);
+  return user.save(callback);
 }
 
-async function deleteUser(id, callback) {
-  await User.deleteOne({ id: id }, (err, _) => {
-    if (err) throw err;
+function deleteUser(id, callback) {
+  User.deleteOne({ id: id }, (err, msg) => {
+    if (err) return callback(err);
+    if (callback) {
+      if (msg.deletedCount === 1) {
+        return callback(null, msg);
+      } else {
+        return callback(new Error("Failed to delete user."));
+      }
+    }
   });
-  if (callback) return callback();
 }
 
-async function deleteAllUsers() {
-  await User.deleteMany({});
+function deleteAllUsers(callback) {
+  return User.deleteMany({}, callback);
 }
 
 module.exports = {
   createUser,
+  createUsers,
   getUser,
-  getUserList,
+  getUsers,
   deleteUser,
   deleteAllUsers,
 };

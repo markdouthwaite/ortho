@@ -2,11 +2,9 @@ const jwt = require("jsonwebtoken");
 const { verifyPassword } = require("./utils");
 class AuthError extends Error {}
 
-async function authenticate(credentials, getter, secret, options, callback) {
+function authenticate(credentials, getter, secret, options, callback) {
   if (!credentials.id || !credentials.password) {
-    return callback(
-      new AuthError("Invalid credentials: no credentials provided.")
-    );
+    return callback(new AuthError("Invalid credentials: missing credentials."));
   }
 
   if (!secret) return callback(new AuthError("No secret provided."));
@@ -29,7 +27,6 @@ async function authenticate(credentials, getter, secret, options, callback) {
       );
     } else {
       const token = jwt.sign(user.claim(), secret, options);
-
       return callback(null, `Bearer ${token}`);
     }
   });

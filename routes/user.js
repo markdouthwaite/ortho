@@ -1,5 +1,5 @@
 const Router = require("express").Router;
-const { getUserHandler, getUserListHandler } = require("../controllers/user");
+const UserController = require("../controllers/user");
 
 async function adminOnlyResource(req, res, next) {
   if (req.user.admin) {
@@ -11,7 +11,13 @@ async function adminOnlyResource(req, res, next) {
 
 const router = Router();
 
-router.get("/account/:id$/", getUserHandler);
-router.get("/list", adminOnlyResource, getUserListHandler);
+router.get("/account/:id$/", UserController.getUserHandler);
+router.get("/list", adminOnlyResource, UserController.getUserListHandler);
+router.post("/account", adminOnlyResource, UserController.createUserHandler);
+router.delete(
+  "/account/:id$/",
+  adminOnlyResource,
+  UserController.deleteUserHandler
+);
 
-module.exports = router;
+module.exports = { UserRouter: router };

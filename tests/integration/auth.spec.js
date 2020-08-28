@@ -11,10 +11,8 @@ describe("Authentication", () => {
   const id = uuid();
   const password = uuid();
 
-  before((done) => {
-    createUser(id, password).then((_) => {
-      done();
-    });
+  before(() => {
+    return createUser(id, password);
   });
 
   describe("POST /v1/auth", () => {
@@ -67,14 +65,14 @@ describe("Authentication", () => {
         .then((res) => {
           expect(res.status).to.equal(401);
           expect(res.text).to.equal(
-            "Invalid credentials: no credentials provided."
+            "Invalid credentials: missing credentials."
           );
         });
     });
   });
 
-  after(async () => {
-    await deleteUser(id);
+  after(() => {
+    deleteUser(id);
   });
 });
 

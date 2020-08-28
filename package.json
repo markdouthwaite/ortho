@@ -4,7 +4,7 @@
   "description": "A simple authentication service.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha tests/* --exit --timeout 15000 "
+    "test": "mocha sandbox.js --exit --timeout 1000 "
   },
   "repository": {
     "type": "git",

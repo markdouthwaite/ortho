@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const jwt = require("express-jwt");
 
+const { UserRouter } = require("./routes/user");
 const { AuthRouter } = require("./routes/auth");
 
 dotenv.config();
@@ -47,6 +48,8 @@ app.use(
   "/v1/auth",
   AuthRouter(SECRET, { expiresIn: TOKEN_EXPIRY, algorithm: SECRET_ALGO })
 );
+
+app.use("/v1/user", UserRouter);
 
 app.listen(PORT, () => {
   console.log("Authentication service live on:", PORT);
