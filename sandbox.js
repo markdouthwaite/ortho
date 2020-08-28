@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./models/user");
-const auth = require("./legacy/src/auth");
+
 const { encryptPassword, verifyPassword } = require("./src/util");
 
 function createUser(id, password, admin, callback) {
@@ -14,8 +14,6 @@ function createUser(id, password, admin, callback) {
   return user.save(callback);
 }
 
-const Auth = auth("secret", { expiresIn: 3600, algorithm: "HS256" });
-const password = "1";
 mongoose.set("useCreateIndex", true);
 mongoose
   .connect("mongodb://localhost:27017/auth", {
@@ -24,9 +22,7 @@ mongoose
     dbName: "users",
   })
   .then(
-    createUser("1", password, false, (err, user) => {
-      Auth(user, "1", (err, token) => {
-        console.log(token);
-      });
+    createUser("mark@douthwaite.io", "hello_world", true, (err, user) => {
+      mongoose.disconnect();
     })
   );

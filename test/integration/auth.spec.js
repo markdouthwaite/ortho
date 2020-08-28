@@ -8,6 +8,8 @@ const { v4: uuid } = require("uuid");
 const auth = require("../../src/auth");
 const { deleteAllUsers, getUser, createUser } = require("../../src/user");
 
+const { app, SECRET } = require("../../app");
+
 function createUsers(users, callback) {
   return async.parallel(
     users.map((_) => async () =>
@@ -22,22 +24,15 @@ function getToken(credentials, callback) {
   });
 }
 
+// getToken(defaultUser, (err, token) => {
+//
+// });
+
 const adminUser = { id: "admin", password: uuid(), admin: true };
 const defaultUser = { id: "default", password: uuid(), admin: false };
 const Auth = auth("secret", { expiresIn: 3600, algorithm: "HS256" });
 
-describe("Authentication resource", () => {
-  before((done) => {
-    mongoose.set("useCreateIndex", true);
-    mongoose
-      .connect("mongodb://localhost:27017/auth", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        dbName: "users",
-      })
-      .then(done());
-  });
-
+describe("Authentication", () => {
   beforeEach((done) => {
     createUsers([adminUser, defaultUser]).then(() => {
       done();
@@ -50,25 +45,114 @@ describe("Authentication resource", () => {
 
   describe("POST /v1/auth", () => {
     context("Using valid credentials", () => {
-      it("Should return a valid token for admin", (done) => {
-        getToken(defaultUser, (err, token) => {
-          const parts = token.split(" ");
-          jwt.verify(parts[1], "secret", (err, claim) => {
-            expect(err).to.equal(null);
-            expect(claim.id).to.equal(defaultUser.id);
-            done();
+      it("Should return (200) with a correct token for admin", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send(adminUser)
+          .then((res) => {
+            const parts = res.body.token.split(" ");
+            jwt.verify(parts[1], SECRET, (err, claim) => {
+              expect(err).to.equal(null);
+              expect(claim.id).to.equal(adminUser.id);
+              expect(claim.admin).to.equal(true);
+              done();
+            });
           });
-        });
       });
-      it("Should return a valid token for non-admin", () => {});
+      it("Should return (200) with a correct token for non-admin", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send(defaultUser)
+          .then((res) => {
+            const parts = res.body.token.split(" ");
+            jwt.verify(parts[1], SECRET, (err, claim) => {
+              expect(err).to.equal(null);
+              expect(claim.id).to.equal(defaultUser.id);
+              expect(claim.admin).to.equal(false);
+              done();
+            });
+          });
+      });
     });
     context("Using invalid credentials", () => {
-      it("Should fail to authenticate when user ID is incorrect", () => {});
-      it("Should fail to authenticate when user ID is not provided", () => {});
-      it("Should fail to authenticate when password is incorrect", () => {});
-      it("Should fail to authenticate when password is not provided", () => {});
-      it("Should fail to authenticate when user ID and password are incorrect", () => {});
-      it("Should fail to authenticate when user ID and password are not provided", () => {});
+      it("Should fail (401) to authenticate when user ID is incorrect", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({ id: "imagined", password: defaultUser.password })
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
+      it("Should fail (401) to authenticate when user ID is not provided", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({ password: "password" })
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
+      it("Should fail (401) to authenticate when password is incorrect", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({ id: defaultUser.id, password: "password" })
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
+      it("Should fail (401) to authenticate when password is not provided", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({ id: defaultUser.id })
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
+      it("Should fail (401) to authenticate when user ID and password are incorrect", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({ id: defaultUser.id })
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
+      it("Should fail (401) to authenticate when user ID and password are not provided", (done) => {
+        request(app)
+          .post("/v1/auth")
+          .send({})
+          .then((res) => {
+            expect(res.status).to.equal(401);
+            expect(Object.keys(res.body).length).to.equal(0);
+            expect(res.text).to.equal(
+              "Authentication failed: invalid credentials"
+            );
+            done();
+          });
+      });
     });
   });
 });
