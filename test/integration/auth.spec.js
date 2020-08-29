@@ -2,7 +2,6 @@ const async = require("async");
 const expect = require("chai").expect;
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
 const { v4: uuid } = require("uuid");
 
 const auth = require("../../src/auth");
@@ -18,19 +17,8 @@ function createUsers(users, callback) {
   );
 }
 
-function getToken(credentials, callback) {
-  getUser(credentials.id, (err, user) => {
-    Auth(user, credentials.password, callback);
-  });
-}
-
-// getToken(defaultUser, (err, token) => {
-//
-// });
-
 const adminUser = { id: "admin", password: uuid(), admin: true };
 const defaultUser = { id: "default", password: uuid(), admin: false };
-const Auth = auth("secret", { expiresIn: 3600, algorithm: "HS256" });
 
 describe("Authentication", () => {
   beforeEach((done) => {
