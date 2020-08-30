@@ -23,15 +23,15 @@
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.0",
-    "morgan": "^1.10.0",
-    "nodemon": "^2.0.4",
-    "uuid": "^8.3.0"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "async": "^3.2.0",
     "chai": "^4.2.0",
     "mocha": "^8.1.2",
+    "nodemon": "^2.0.4",
     "prettier": "^2.1.1",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "uuid": "^8.3.0"
   }
 }

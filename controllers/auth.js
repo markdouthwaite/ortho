@@ -4,7 +4,7 @@ const auth = require("../src/auth");
 function AuthHandler(secret, options) {
   const Auth = auth(secret, options);
   return (req, res) => {
-    getUser(req.body.id, (err, user) => {
+    getUser(req.body.username, (err, user) => {
       if (err) {
         res.status(500).send(`Authentication failed: ${err.message}`);
       } else {

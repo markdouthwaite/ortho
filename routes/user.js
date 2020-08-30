@@ -12,16 +12,24 @@ async function adminOnlyResource(req, res, next) {
 }
 
 async function restrictedResource(req, res, next) {
-  if (req.user.admin || req.user.id === req.params.id) {
+  if (req.user.admin || req.user.username === req.params.username) {
     next();
   } else {
     res.status(403).send("You do not have permission to use this resource.");
   }
 }
 
-router.get("/account/:id", restrictedResource, UserController.getUserHandler);
+router.get(
+  "/account/:username",
+  restrictedResource,
+  UserController.getUserHandler
+);
 router.post("/account", adminOnlyResource, UserController.createUserHandler);
-// router.delete("/account", adminOnlyResource, UserController.getUserHandler);
+router.delete(
+  "/account/:username",
+  adminOnlyResource,
+  UserController.deleteUserHandler
+);
 
 module.exports = {
   UserRouter: router,

@@ -1,24 +1,14 @@
-const async = require("async");
 const expect = require("chai").expect;
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 
-const auth = require("../../src/auth");
-const { deleteAllUsers, getUser, createUser } = require("../../src/user");
+const { deleteAllUsers, getUser, createUsers } = require("../../src/user");
 
 const { app, SECRET } = require("../../app");
 
-function createUsers(users, callback) {
-  return async.parallel(
-    users.map((_) => async () =>
-      createUser(_.id, _.password, _.admin, callback)
-    )
-  );
-}
-
-const adminUser = { id: "admin", password: uuid(), admin: true };
-const defaultUser = { id: "default", password: uuid(), admin: false };
+const adminUser = { username: "admin", password: uuid(), admin: true };
+const defaultUser = { username: "default", password: uuid(), admin: false };
 
 describe("Authentication", () => {
   beforeEach((done) => {
@@ -41,7 +31,7 @@ describe("Authentication", () => {
             const parts = res.body.token.split(" ");
             jwt.verify(parts[1], SECRET, (err, claim) => {
               expect(err).to.equal(null);
-              expect(claim.id).to.equal(adminUser.id);
+              expect(claim.username).to.equal(adminUser.username);
               expect(claim.admin).to.equal(true);
               done();
             });
@@ -55,7 +45,7 @@ describe("Authentication", () => {
             const parts = res.body.token.split(" ");
             jwt.verify(parts[1], SECRET, (err, claim) => {
               expect(err).to.equal(null);
-              expect(claim.id).to.equal(defaultUser.id);
+              expect(claim.username).to.equal(defaultUser.username);
               expect(claim.admin).to.equal(false);
               done();
             });
@@ -66,7 +56,7 @@ describe("Authentication", () => {
       it("Should fail (401) to authenticate when user ID is incorrect", (done) => {
         request(app)
           .post("/v1/auth")
-          .send({ id: "imagined", password: defaultUser.password })
+          .send({ username: "imagined", password: defaultUser.password })
           .then((res) => {
             expect(res.status).to.equal(401);
             expect(Object.keys(res.body).length).to.equal(0);
@@ -92,7 +82,7 @@ describe("Authentication", () => {
       it("Should fail (401) to authenticate when password is incorrect", (done) => {
         request(app)
           .post("/v1/auth")
-          .send({ id: defaultUser.id, password: "password" })
+          .send({ username: defaultUser.username, password: "password" })
           .then((res) => {
             expect(res.status).to.equal(401);
             expect(Object.keys(res.body).length).to.equal(0);
@@ -105,7 +95,7 @@ describe("Authentication", () => {
       it("Should fail (401) to authenticate when password is not provided", (done) => {
         request(app)
           .post("/v1/auth")
-          .send({ id: defaultUser.id })
+          .send({ username: defaultUser.username })
           .then((res) => {
             expect(res.status).to.equal(401);
             expect(Object.keys(res.body).length).to.equal(0);
@@ -118,7 +108,7 @@ describe("Authentication", () => {
       it("Should fail (401) to authenticate when user ID and password are incorrect", (done) => {
         request(app)
           .post("/v1/auth")
-          .send({ id: defaultUser.id })
+          .send({ username: defaultUser.username })
           .then((res) => {
             expect(res.status).to.equal(401);
             expect(Object.keys(res.body).length).to.equal(0);
