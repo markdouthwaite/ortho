@@ -16,17 +16,26 @@ const SECRET = process.env.SERVICE_SECRET;
 const SECRET_ALGO = "HS256";
 const TOKEN_EXPIRY = 3600;
 
+console.log(URI);
+
 mongoose.set("useCreateIndex", true);
-mongoose.connect(URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: DB_NAME,
-});
+mongoose
+  .connect(URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: DB_NAME,
+  })
+  .then(console.log("Connected to MongoDB backend."))
+  .catch((err) => {
+    console.log("MongoDB connection error. Aborting.", err);
+    process.exit(1);
+  });
 
 app = express();
 
-// if process.env.NODE_ENV === "test"
-// app.use(morgan("dev"));
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan("dev"));
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

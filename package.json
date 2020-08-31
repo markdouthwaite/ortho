@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "A simple authentication service.",
   "main": "legacy/app.js",
+  "bin": {
+    "ortho": "bin/index.js"
+  },
   "scripts": {
     "test": "mocha test/* --exit --timeout 1000 "
   },
@@ -23,7 +26,8 @@
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "async": "^3.2.0",
