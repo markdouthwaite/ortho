@@ -1,5 +1,4 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const jwt = require("express-jwt");
@@ -7,18 +6,34 @@ const jwt = require("express-jwt");
 const { UserRouter } = require("./routes/user");
 const { AuthRouter } = require("./routes/auth");
 
-dotenv.config();
+function normalizePort(val) {
+  const port = parseInt(val, 10);
 
-const URI = process.env.MONGODB_URI;
-const DB_NAME = process.env.DB_NAME;
-const PORT = process.env.PORT || 3000;
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+const PORT = normalizePort(process.env.PORT || "3000");
 const SECRET = process.env.SECRET;
+
+const DB_URI = process.env.MONGODB_URI;
+const DB_NAME = process.env.DB_NAME;
+
 const SECRET_ALGO = "HS256";
 const TOKEN_EXPIRY = 3600;
 
 mongoose.set("useCreateIndex", true);
 mongoose
-  .connect(URI, {
+  .connect(DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     dbName: DB_NAME,
@@ -29,7 +44,7 @@ mongoose
     process.exit(1);
   });
 
-app = express();
+const app = express();
 
 if (process.env.NODE_ENV !== "test") {
   app.use(morgan("dev"));

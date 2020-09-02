@@ -1,4 +1,4 @@
-FROM node:12.18.3-alpine
+FROM node:12.18.3
 
 WORKDIR /usr/src/app
 
@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY . /usr/src/app
 
 ARG PORT
 ARG SECRET
@@ -17,9 +17,9 @@ ARG MONGODB_URI
 ENV PORT=$PORT
 ENV SECRET=$SECRET
 ENV DB_NAME=$DB_NAME
-ARG NODE_ENV=$NODE_ENV
+ENV NODE_ENV=$NODE_ENV
 ENV MONGODB_URI=$MONGODB_URI
 
 EXPOSE $PORT
 
-CMD ["node", "app.js"]
+CMD ["npm", "start"]

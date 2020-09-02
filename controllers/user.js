@@ -5,7 +5,7 @@ function getUserHandler(req, res) {
     if (err) {
       res.status(500).send(err.message);
     } else if (!user) {
-      res.status(400).send(`No such user '${req.body.username}`);
+      res.status(400).send(`No such user '${req.params.username}'.`);
     } else {
       res.status(200).json({ username: user.username, admin: user.admin });
     }

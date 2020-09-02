@@ -1,8 +1,15 @@
+.PHONY: test serve
+
 test:
-	@docker-compose run ortho-backend &
-	@npm test
+	@export NODE_ENV=local
+	@docker-compose build
+	@docker-compose run -d ortho-backend
+	@docker-compose run ortho-service npm test
+	@docker-compose down
 
 serve:
-	@export MONGODB_URI=mongodb://localhost:27017
+	@export NODE_ENV=local
 	@docker-compose build
-	@docker-compose up &
+	@docker-compose up -d
+
+deploy:
