@@ -10,6 +10,6 @@ test:
 serve:
 	@export NODE_ENV=local
 	@docker-compose build
-	@docker-compose up -d
+	@docker-compose up
 
 deploy:

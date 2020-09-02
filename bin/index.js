@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const yargs = require("yargs");
 
 const { createUser, deleteUser } = require("../src/user");
 
-dotenv.config();
+console.log(process.env);
 
 function execute(args, callback) {
   if (args.username) {
