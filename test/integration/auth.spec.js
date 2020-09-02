@@ -3,7 +3,7 @@ const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 
-const { deleteAllUsers, getUser, createUsers } = require("../../src/user");
+const { deleteAllUsers, createUsers } = require("../../src/user");
 
 const { app, SECRET } = require("../../app");
 

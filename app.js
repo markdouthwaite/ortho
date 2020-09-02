@@ -11,12 +11,10 @@ dotenv.config();
 
 const URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.DB_NAME;
-const PORT = process.env.SERVICE_PORT || 3000;
-const SECRET = process.env.SERVICE_SECRET;
+const PORT = process.env.PORT || 3000;
+const SECRET = process.env.SECRET;
 const SECRET_ALGO = "HS256";
 const TOKEN_EXPIRY = 3600;
-
-console.log(URI);
 
 mongoose.set("useCreateIndex", true);
 mongoose
