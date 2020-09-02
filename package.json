@@ -7,7 +7,7 @@
     "ortho": "bin/index.js"
   },
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon bin/www",
     "test": "mocha test/* --exit --timeout 1000 "
   },
   "repository": {

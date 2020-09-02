@@ -6,23 +6,6 @@ const jwt = require("express-jwt");
 const { UserRouter } = require("./routes/user");
 const { AuthRouter } = require("./routes/auth");
 
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-const PORT = normalizePort(process.env.PORT || "3000");
 const SECRET = process.env.SECRET;
 
 const DB_URI = process.env.MONGODB_URI;
@@ -38,7 +21,7 @@ mongoose
     useUnifiedTopology: true,
     dbName: DB_NAME,
   })
-  .then(console.log("Connected to MongoDB backend."))
+  .then(console.log("Connected to MongoDB."))
   .catch((err) => {
     console.log("MongoDB connection error. Aborting.", err);
     process.exit(1);
@@ -74,8 +57,8 @@ app.use(
 
 app.use("/v1/user", UserRouter);
 
-app.listen(PORT, () => {
-  console.log("Authentication service live on:", PORT);
+app.use("*", function (req, res) {
+  res.status(404).send(`Cannot ${req.method} ${req.baseUrl}`);
 });
 
 module.exports = { app, SECRET, SECRET_ALGO, TOKEN_EXPIRY };

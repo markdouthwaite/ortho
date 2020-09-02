@@ -5,8 +5,6 @@ const yargs = require("yargs");
 
 const { createUser, deleteUser } = require("../src/user");
 
-console.log(process.env);
-
 function execute(args, callback) {
   if (args.username) {
     mongoose.set("useCreateIndex", true);

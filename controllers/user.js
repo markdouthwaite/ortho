@@ -21,8 +21,20 @@ function createUserHandler(req, res) {
       user.username,
       user.password,
       user.admin || false,
-      (err, user) => {
-        res.status(201).send(`User '${user.username}' created.`);
+      (err, newUser) => {
+        if (err || !newUser) {
+          if (err.code === 11000) {
+            res
+              .status(400)
+              .send(
+                `User '${user.username}' could not be created: user already exists.`
+              );
+          } else {
+            res.status(400).send("Failed to create user.");
+          }
+        } else {
+          res.status(201).send(`User '${user.username}' created.`);
+        }
       }
     );
   }
