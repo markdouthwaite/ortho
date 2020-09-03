@@ -59,10 +59,6 @@ describe("Authentication", () => {
           .send({ username: "imagined", password: defaultUser.password })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });
@@ -72,10 +68,6 @@ describe("Authentication", () => {
           .send({ password: "password" })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });
@@ -85,10 +77,6 @@ describe("Authentication", () => {
           .send({ username: defaultUser.username, password: "password" })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });
@@ -98,10 +86,6 @@ describe("Authentication", () => {
           .send({ username: defaultUser.username })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });
@@ -111,10 +95,6 @@ describe("Authentication", () => {
           .send({ username: defaultUser.username })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });
@@ -124,10 +104,6 @@ describe("Authentication", () => {
           .send({})
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(Object.keys(res.body).length).to.equal(0);
-            expect(res.text).to.equal(
-              "Authentication failed: invalid credentials"
-            );
             done();
           });
       });

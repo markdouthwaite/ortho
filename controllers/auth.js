@@ -1,4 +1,5 @@
 const { getUser } = require("../src/user");
+const { HTTPError } = require("../src/error");
 const auth = require("../src/auth");
 
 /**
@@ -9,14 +10,16 @@ const auth = require("../src/auth");
  */
 function AuthHandler(secret, options) {
   const Auth = auth(secret, options);
-  return (req, res) => {
+  return (req, res, next) => {
     getUser(req.body.username, (err, user) => {
       if (err) {
-        res.status(500).send(`Authentication failed: ${err.message}`);
+        next(new HTTPError(500, "AuthenticationError", "unknown-error"));
       } else {
         Auth(user, req.body.password, (err, token) => {
           if (err) {
-            res.status(401).send(err.message);
+            next(
+              new HTTPError(401, "AuthenticationError", "invalid-credentials")
+            );
           } else {
             res.status(200).json({ token: token });
           }

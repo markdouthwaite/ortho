@@ -66,9 +66,6 @@ describe("User management", () => {
             })
             .then((res) => {
               expect(res.status).to.equal(403);
-              expect(res.text).to.equal(
-                "You do not have permission to use this resource."
-              );
               getUser(userId, (err, user) => {
                 expect(user).to.equal(null);
                 done();
@@ -91,7 +88,6 @@ describe("User management", () => {
           })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(res.text).to.equal("Failed to authenticate credentials.");
             getUser(userId, (err, user) => {
               expect(user).to.equal(null);
               done();
@@ -110,7 +106,6 @@ describe("User management", () => {
           })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(res.text).to.equal("Failed to authenticate credentials.");
             getUser(userId, (err, user) => {
               expect(user).to.equal(null);
               done();
@@ -158,7 +153,6 @@ describe("User management", () => {
           .set({ Authorization: "invalid_token" })
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(res.text).to.equal("Failed to authenticate credentials.");
             getUser(defaultUser.username, (err, user) => {
               expect(defaultUser.username).to.equal(defaultUser.username);
               done();
@@ -170,7 +164,6 @@ describe("User management", () => {
           .post(`/v1/user/account/${defaultUser.username}`)
           .then((res) => {
             expect(res.status).to.equal(401);
-            expect(res.text).to.equal("Failed to authenticate credentials.");
             getUser(defaultUser.username, (err, user) => {
               expect(defaultUser.username).to.equal(defaultUser.username);
               done();

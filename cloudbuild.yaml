@@ -1,0 +1,18 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker build -t gcr.io/$PROJECT_ID/micro --build-arg SECRET=$$_SECRET_TOKEN .']
+    secretEnv: ['_SERVICE']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$_PROJECT_ID/micro']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'micro', '--image', 'gcr.io/$PROJECT_ID/micro', '--platform', 'managed', '--region', 'europe-west1']
+env:
+  - "_NODE_ENV=$NODE_ENV"
+images:
+  - gcr.io/encoded-antler-258511/micro
+secrets:
+  - kmsKeyName: "projects/$PROJECT_ID/locations/global/keyRings/$_KMS_KEYRING_NAME/cryptoKeys/$_KMS_KEY_NAME"
+    secretEnv:
+      _SECRET_TOKEN: 'CiQAw8ifwTInjubQJe+1lWPRH+JgL92In+DSfTi9JLQdok9AIaISNABjYzvWsrXStTa2SOIu+pc3H0x4r7860gXbrdLG6H3eoNdiGvl4dWAaoEXmkzUjxd0K+xE='

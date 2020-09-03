@@ -32,7 +32,7 @@ function deleteUser(username, callback) {
       if (msg.deletedCount === 1) {
         return callback(null, msg);
       } else {
-        return callback(new Error("Failed to delete user."));
+        return callback(new Error("No such user."));
       }
     }
   });
