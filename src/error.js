@@ -1,28 +1,19 @@
 class HTTPError extends Error {
-  constructor(code, title, reason) {
-    super(`${title}: ${reason}`);
+  constructor(code, title, message) {
+    super(`${title}: ${message}`);
     this.code = code;
     this.title = title;
-    this.reason = reason;
+    this.message = message;
   }
 
   toJSON() {
     return {
       title: this.title,
-      reason: this.reason,
+      message: this.message,
     };
-  }
-}
-
-function httpErrorHandler(err, req, res, next) {
-  if (err instanceof HTTPError) {
-    res.status(err.code).json(err.toJSON());
-  } else {
-    next();
   }
 }
 
 module.exports = {
   HTTPError,
-  httpErrorHandler,
 };

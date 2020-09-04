@@ -5,7 +5,11 @@ const jwt = require("express-jwt");
 
 const { UserRouter } = require("./routes/user");
 const { AuthRouter } = require("./routes/auth");
-const { httpErrorHandler, HTTPError } = require("./src/error");
+const {
+  httpErrorHandler,
+  authErrorHandler,
+  invalidMethodErrorHandler,
+} = require("./controllers/error");
 
 const SECRET = process.env.SECRET;
 
@@ -43,13 +47,7 @@ app.use(
   })
 );
 
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    next(new HTTPError(401, "AuthenticationError", "invalid-credentials"));
-  } else {
-    next();
-  }
-});
+app.use(authErrorHandler);
 
 app.use(
   "/v1/auth",
@@ -58,16 +56,7 @@ app.use(
 
 app.use("/v1/user", UserRouter);
 
-app.use("*", function (req, res, next) {
-  next(
-    new HTTPError(
-      404,
-      "InvalidMethodError",
-      `cannot-call-${req.method.toLowerCase()}`
-    )
-  );
-});
-
+app.use("*", invalidMethodErrorHandler);
 app.use(httpErrorHandler);
 
 module.exports = { app, SECRET, SECRET_ALGO, TOKEN_EXPIRY };
