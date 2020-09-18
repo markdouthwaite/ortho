@@ -2,7 +2,7 @@
   "name": "ortho",
   "version": "0.0.1",
   "description": "A simple authentication service.",
-  "main": "legacy/app.js",
+  "main": "app.js",
   "bin": {
     "ortho": "bin/index.js"
   },

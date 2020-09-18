@@ -11,5 +11,3 @@ serve:
 	@export NODE_ENV=local
 	@docker-compose build
 	@docker-compose up
-
-deploy:

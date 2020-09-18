@@ -1,4 +1,3 @@
-const async = require("async");
 const { encryptPassword } = require("./util");
 const User = require("../models/user");
 
@@ -17,10 +16,10 @@ function createUser(username, password, admin, callback) {
   return user.save(callback);
 }
 
-function createUsers(users, callback) {
-  return async.parallel(
-    users.map((_) => async () =>
-      createUser(_.username, _.password, _.admin, callback)
+async function createUsers(users, callback) {
+  await Promise.all(
+    users.map(({ username, password, admin }) =>
+      createUser(username, password, admin, callback)
     )
   );
 }
